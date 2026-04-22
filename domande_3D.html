@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Domande">
+<title>Domande — Aristotele</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --bg:#ffffff; --bg2:#f7f7f5; --bg3:#f0efec;
+    --text:#1a1a1a; --text2:#555555; --text3:#999999;
+    --border:rgba(0,0,0,0.12); --border2:rgba(0,0,0,0.22);
+    --radius:10px; --radius-lg:14px;
+    --blue-bg:#E6F1FB; --blue-border:#378ADD; --blue-text:#0C447C;
+    --green-bg:#EAF3DE; --green-border:#639922; --green-text:#3B6D11;
+    --amber-bg:#FAEEDA; --amber-border:#BA7517; --amber-text:#854F0B;
+    --red-bg:#FCEBEB; --red-border:#E24B4A; --red-text:#A32D2D;
+    --teal-text:#0F6E56; --coral-text:#993C1D;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg:#1c1c1e; --bg2:#2c2c2e; --bg3:#3a3a3c;
+      --text:#f2f2f7; --text2:#aeaeb2; --text3:#636366;
+      --border:rgba(255,255,255,0.12); --border2:rgba(255,255,255,0.22);
+      --blue-bg:#0c2d4a; --blue-border:#378ADD; --blue-text:#85B7EB;
+      --green-bg:#1a2e0a; --green-text:#97C459;
+      --amber-bg:#2e1f00; --amber-text:#FAC775;
+      --red-bg:#2e0a0a; --red-text:#F09595;
+      --teal-text:#5DCAA5; --coral-text:#F0997B;
+    }
+  }
+  html,body { background:var(--bg3); color:var(--text); font-family:-apple-system,BlinkMacSystemFont,"Helvetica Neue",Arial,sans-serif; font-size:16px; line-height:1.5; -webkit-text-size-adjust:100%; min-height:100vh; }
+  .top-bar { background:var(--bg); border-bottom:0.5px solid var(--border); padding:14px 16px 10px; position:sticky; top:0; z-index:100; }
+  .top-bar-inner { display:flex; align-items:center; justify-content:space-between; gap:12px; max-width:720px; margin:0 auto; }
+  .app-title { font-size:15px; font-weight:600; color:var(--text); white-space:nowrap; }
+  .nav-controls { display:flex; align-items:center; gap:8px; }
+  .nav-btn { width:36px; height:36px; border-radius:var(--radius); border:0.5px solid var(--border2); background:var(--bg); color:var(--text); font-size:17px; cursor:pointer; display:flex; align-items:center; justify-content:center; -webkit-tap-highlight-color:transparent; touch-action:manipulation; }
+  .nav-btn:active { background:var(--bg2); }
+  .nav-counter { font-size:13px; color:var(--text2); min-width:48px; text-align:center; font-variant-numeric:tabular-nums; }
+  .progress-bar { height:3px; background:var(--border); margin-top:10px; border-radius:2px; overflow:hidden; }
+  .progress-fill { height:100%; background:var(--blue-border); border-radius:2px; transition:width 0.3s ease; }
+  .dot-scroll { background:var(--bg); border-bottom:0.5px solid var(--border); overflow-x:auto; -webkit-overflow-scrolling:touch; scrollbar-width:none; }
+  .dot-scroll::-webkit-scrollbar { display:none; }
+  .dot-inner { display:flex; gap:6px; padding:10px 16px; width:max-content; }
+  .dot { width:30px; height:30px; border-radius:50%; border:0.5px solid var(--border); background:var(--bg2); font-size:11px; font-weight:500; display:flex; align-items:center; justify-content:center; cursor:pointer; color:var(--text2); flex-shrink:0; -webkit-tap-highlight-color:transparent; touch-action:manipulation; }
+  .dot.done { background:var(--blue-bg); border-color:var(--blue-border); color:var(--blue-text); }
+  .dot.current { border:2px solid var(--blue-border); color:var(--text); font-weight:700; }
+  .main { max-width:720px; margin:0 auto; padding:16px; }
+  .card { background:var(--bg); border-radius:var(--radius-lg); border:0.5px solid var(--border); padding:16px; margin-bottom:14px; }
+  .card-header { font-size:11px; font-weight:600; letter-spacing:0.06em; text-transform:uppercase; color:var(--text3); margin-bottom:12px; }
+  .student-name { font-size:22px; font-weight:600; }
+  .field-label { font-size:11px; color:var(--text3); font-weight:500; margin-bottom:4px; }
+  .criterio-block { padding-bottom:14px; margin-bottom:14px; border-bottom:0.5px solid var(--border); }
+  .criterio-block:last-of-type { border-bottom:none; margin-bottom:0; padding-bottom:0; }
+  .criterio-name { font-size:15px; font-weight:600; margin-bottom:2px; }
+  .criterio-desc { font-size:12px; color:var(--text2); margin-bottom:8px; line-height:1.4; }
+  .scale-row { display:flex; gap:0; border-radius:var(--radius); overflow:hidden; border:0.5px solid var(--border); margin-bottom:8px; }
+  .scale-btn { flex:1; text-align:center; padding:7px 2px; background:var(--bg2); font-size:11px; color:var(--text2); cursor:pointer; border:none; border-right:0.5px solid var(--border); font-family:inherit; line-height:1.3; -webkit-tap-highlight-color:transparent; touch-action:manipulation; }
+  .scale-btn:last-child { border-right:none; }
+  .scale-btn.sel { background:var(--blue-bg); color:var(--blue-text); font-weight:600; }
+  .note-field { width:100%; background:var(--bg2); border:0.5px solid var(--border); border-radius:var(--radius); padding:8px 10px; font-size:14px; font-family:inherit; color:var(--text); resize:none; min-height:50px; line-height:1.5; -webkit-appearance:none; }
+  .note-field:focus { outline:none; border-color:var(--blue-border); }
+  .pf-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:10px; }
+  .pf-label { font-size:11px; font-weight:600; margin-bottom:4px; }
+  .pf-label.pos { color:var(--teal-text); }
+  .pf-label.neg { color:var(--coral-text); }
+  .livello-row { display:flex; gap:0; border-radius:var(--radius); overflow:hidden; border:0.5px solid var(--border); margin-bottom:14px; }
+  .liv-btn { flex:1; text-align:center; padding:10px 4px; background:var(--bg2); font-size:16px; font-weight:700; color:var(--text2); cursor:pointer; border:none; border-right:0.5px solid var(--border); font-family:inherit; -webkit-tap-highlight-color:transparent; touch-action:manipulation; }
+  .liv-btn:last-child { border-right:none; }
+  .liv-btn .liv-sub { display:block; font-size:10px; font-weight:400; margin-top:2px; opacity:0.8; }
+  .liv-btn.sel-D { background:var(--red-bg);   color:var(--red-text); }
+  .liv-btn.sel-C { background:var(--amber-bg); color:var(--amber-text); }
+  .liv-btn.sel-B { background:var(--blue-bg);  color:var(--blue-text); }
+  .liv-btn.sel-A { background:var(--green-bg); color:var(--green-text); }
+  .export-card { background:var(--bg); border-radius:var(--radius-lg); border:0.5px solid var(--border); padding:16px; margin-bottom:40px; }
+  .btn-secondary { width:100%; padding:12px; border:0.5px solid var(--border2); border-radius:var(--radius); background:var(--bg); color:var(--text); font-size:15px; font-family:inherit; cursor:pointer; margin-bottom:10px; display:block; -webkit-tap-highlight-color:transparent; }
+  .btn-secondary:active { background:var(--bg2); }
+  .btn-primary { width:100%; padding:12px; border:0.5px solid var(--blue-border); border-radius:var(--radius); background:var(--blue-bg); color:var(--blue-text); font-size:15px; font-weight:600; font-family:inherit; cursor:pointer; display:block; -webkit-tap-highlight-color:transparent; }
+  .btn-primary:active { opacity:0.8; }
+  .toast { position:fixed; bottom:30px; left:50%; transform:translateX(-50%) translateY(80px); background:rgba(26,26,26,0.92); color:#fff; padding:10px 22px; border-radius:20px; font-size:14px; font-weight:500; opacity:0; transition:transform 0.3s ease,opacity 0.3s ease; pointer-events:none; z-index:999; white-space:nowrap; }
+  .toast.show { transform:translateX(-50%) translateY(0); opacity:1; }
+</style>
+</head>
+<body>
+
+<div class="top-bar">
+  <div class="top-bar-inner">
+    <div class="app-title">Domande — Aristotele</div>
+    <div class="nav-controls">
+      <button class="nav-btn" onclick="prevStudent()">&#8592;</button>
+      <span class="nav-counter" id="counter">1 / 19</span>
+      <button class="nav-btn" onclick="nextStudent()">&#8594;</button>
+    </div>
+  </div>
+  <div style="max-width:720px;margin:0 auto">
+    <div class="progress-bar"><div class="progress-fill" id="progress" style="width:0%"></div></div>
+  </div>
+</div>
+
+<div class="dot-scroll"><div class="dot-inner" id="dot-grid"></div></div>
+<div class="main" id="main"></div>
+<div class="toast" id="toast"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script>
+const STUDENTI = [
+  "Baldacchini Daniele","Buzzelli Francesca","Carabba Marella",
+  "D'Arcangelo Giada","De Frenzi Lorenzo","De Ninis Caterina",
+  "Di Paolo Jacopo","Liberato Sofia","Lisanti Matilde",
+  "Longo Alessandra","Mercanti Leonardo Maria","Pelliccia Stefano",
+  "Pompilio Davide","Radoccia Sergio","Ranieri Marta",
+  "Santurbano Matteo","Stefanachi Francesco","Tusè Francesca",
+  "Visini Anna"
+];
+
+const CRITERI = [
+  {k:"dpad", nome:"Padronanza dei contenuti",           desc:"Propone concetti corretti senza limitarsi alla ripetizione mnemonica, usando correttamente la terminologia aristotelica"},
+  {k:"dana", nome:"Capacità di analisi e sintesi",      desc:"Seleziona informazioni rilevanti ed evidenzia i nessi logici nelle risposte"},
+  {k:"dcom", nome:"Efficacia comunicativa",             desc:"Risponde in modo ordinato e fluido"},
+  {k:"drie", nome:"Rielaborazione personale e critica", desc:"Opera collegamenti con altri filosofi, temi attuali e/o vissuto personale"},
+];
+
+const SCALE   = ["Grav. insuff.","Insufficiente","Sufficiente","Buono","Ottimo"];
+const LIVELLI = [{v:"D",sub:"Insufficiente"},{v:"C",sub:"Sufficiente"},{v:"B",sub:"Buono"},{v:"A",sub:"Ottimo"}];
+const LIVELLI_LABEL = {D:"D — Insufficiente",C:"C — Sufficiente",B:"B — Buono",A:"A — Ottimo"};
+
+let current = 0;
+let data = {};
+
+function loadData(i)   { try { const s=localStorage.getItem('dom2_s'+i); return s?JSON.parse(s):{}; } catch(e) { return {}; } }
+function saveData(i,d) { try { localStorage.setItem('dom2_s'+i, JSON.stringify(d)); } catch(e) {} }
+function isDone(i)     { const d=loadData(i); return CRITERI.some(c=>d['r_'+c.k]!=null); }
+
+function esc(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+function buildDots() {
+  const g = document.getElementById('dot-grid');
+  g.innerHTML = '';
+  STUDENTI.forEach((s,i) => {
+    const d = document.createElement('button');
+    d.className = 'dot'+(isDone(i)?' done':'')+(i===current?' current':'');
+    d.title = s; d.textContent = i+1;
+    d.onclick = () => goTo(i);
+    g.appendChild(d);
+  });
+  const active = g.children[current];
+  if (active) active.scrollIntoView({behavior:'smooth',block:'nearest',inline:'center'});
+}
+
+function buildScheda() {
+  const s = STUDENTI[current];
+  data = loadData(current);
+
+  let html = `<div class="card">
+    <div class="card-header">Studente ${current+1} di ${STUDENTI.length}</div>
+    <div class="student-name">${esc(s)}</div>
+  </div>`;
+
+  html += `<div class="card"><div class="card-header">B — Risposte alle domande</div>`;
+  CRITERI.forEach(c => { html += criterioHTML(c); });
+  html += `<div class="pf-grid">
+    <div><div class="pf-label pos">Punti di forza</div>
+    <textarea class="note-field" id="f_pf" rows="3" placeholder="…">${esc(data.pf||'')}</textarea></div>
+    <div><div class="pf-label neg">Punti di debolezza</div>
+    <textarea class="note-field" id="f_pd" rows="3" placeholder="…">${esc(data.pd||'')}</textarea></div>
+  </div></div>`;
+
+  html += `<div class="card">
+    <div class="card-header">Livello complessivo e note finali</div>
+    <div class="field-label" style="margin-bottom:6px">Livello complessivo</div>
+    <div class="livello-row">`;
+  LIVELLI.forEach(l => {
+    html += `<button class="liv-btn${data.livello===l.v?' sel-'+l.v:''}" data-liv="${l.v}">${l.v}<span class="liv-sub">${l.sub}</span></button>`;
+  });
+  html += `</div>
+    <div class="field-label" style="margin-bottom:4px">Osservazioni generali</div>
+    <textarea class="note-field" id="f_note_finale" rows="4" placeholder="Note conclusive sulla prestazione complessiva…">${esc(data.note_finale||'')}</textarea>
+  </div>`;
+
+  html += `<div class="export-card">
+    <div class="card-header">Esporta</div>
+    <button class="btn-secondary" onclick="copyAll()">Copia riepilogo testo</button>
+    <button class="btn-primary" onclick="generatePDF()">Genera PDF riepilogo</button>
+  </div>`;
+
+  document.getElementById('main').innerHTML = html;
+
+  document.querySelectorAll('.scale-btn').forEach(el => {
+    if (data['r_'+el.dataset.key] === parseInt(el.dataset.val)) el.classList.add('sel');
+    el.addEventListener('click', () => {
+      document.querySelectorAll(`.scale-btn[data-key="${el.dataset.key}"]`).forEach(x=>x.classList.remove('sel'));
+      el.classList.add('sel');
+      data['r_'+el.dataset.key] = parseInt(el.dataset.val);
+      autosave();
+    });
+  });
+
+  document.querySelectorAll('.liv-btn').forEach(el => {
+    el.addEventListener('click', () => {
+      document.querySelectorAll('.liv-btn').forEach(x=>{ x.className='liv-btn'; });
+      el.classList.add('sel-'+el.dataset.liv);
+      data.livello = el.dataset.liv;
+      autosave();
+    });
+  });
+
+  document.querySelectorAll('textarea, input[type=text]').forEach(el => {
+    el.addEventListener('input', () => { data[el.id.replace('f_','')] = el.value; autosave(); });
+  });
+
+  document.getElementById('counter').textContent = `${current+1} / ${STUDENTI.length}`;
+  updateProgress();
+}
+
+function criterioHTML(c) {
+  let opts = SCALE.map((lbl,i) =>
+    `<button class="scale-btn${data['r_'+c.k]===i?' sel':''}" data-key="${c.k}" data-val="${i}">${lbl}</button>`
+  ).join('');
+  return `<div class="criterio-block">
+    <div class="criterio-name">${esc(c.nome)}</div>
+    <div class="criterio-desc">${esc(c.desc)}</div>
+    <div class="scale-row">${opts}</div>
+    <textarea class="note-field" id="f_note_${c.k}" rows="1" placeholder="Note…">${esc(data['note_'+c.k]||'')}</textarea>
+  </div>`;
+}
+
+function autosave() { saveData(current,data); buildDots(); updateProgress(); }
+function updateProgress() {
+  const done = STUDENTI.filter((_,i)=>isDone(i)).length;
+  document.getElementById('progress').style.width = Math.round(done/STUDENTI.length*100)+'%';
+}
+function goTo(i) { current=i; buildScheda(); buildDots(); window.scrollTo({top:0,behavior:'smooth'}); }
+function prevStudent() { if(current>0) goTo(current-1); }
+function nextStudent() { if(current<STUDENTI.length-1) goTo(current+1); }
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'), 2200);
+}
+
+function formatRecord(i) {
+  const d = loadData(i);
+  if (!isDone(i)) return null;
+  let lines = ['─'.repeat(48), `Studente: ${STUDENTI[i]}`, ''];
+  CRITERI.forEach(c => {
+    const v=d['r_'+c.k], nota=d['note_'+c.k]||'';
+    lines.push(`  ${c.nome}: ${v!=null?SCALE[v]:'—'}${nota?' — '+nota:''}`);
+  });
+  if (d.pf) lines.push(`  Punti di forza: ${d.pf}`);
+  if (d.pd) lines.push(`  Punti di debolezza: ${d.pd}`);
+  lines.push('');
+  if (d.livello)     lines.push(`Livello: ${LIVELLI_LABEL[d.livello]||d.livello}`);
+  if (d.note_finale) lines.push(`Note finali: ${d.note_finale}`);
+  return lines.join('\n');
+}
+
+function copyAll() {
+  const records = STUDENTI.map((_,i)=>formatRecord(i)).filter(Boolean);
+  if (!records.length) { showToast('Nessuna scheda compilata ancora'); return; }
+  const txt = 'DOMANDE — ARISTOTELE\n\n'+records.join('\n\n');
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(txt).then(()=>showToast('Testo copiato')).catch(()=>fallbackCopy(txt));
+  } else { fallbackCopy(txt); }
+}
+
+function fallbackCopy(txt) {
+  const ta = document.createElement('textarea');
+  ta.value=txt; ta.style.cssText='position:fixed;opacity:0;top:0;left:0';
+  document.body.appendChild(ta); ta.focus(); ta.select();
+  try { document.execCommand('copy'); showToast('Testo copiato'); } catch(e) { showToast('Copia non disponibile'); }
+  document.body.removeChild(ta);
+}
+
+function generatePDF() {
+  if (typeof window.jspdf==='undefined') { showToast('Libreria in caricamento, riprova'); return; }
+  const {jsPDF} = window.jspdf;
+  const doc = new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
+  const ml=15, mr=15, mt=18, mb=18, cw=210-ml-mr;
+  let y = mt;
+  function checkPage(n) { if(y+n>297-mb){doc.addPage();y=mt;} }
+
+  doc.setFont('helvetica','bold'); doc.setFontSize(13);
+  doc.text('Domande — Aristotele', ml, y); y+=7;
+  doc.setFont('helvetica','normal'); doc.setFontSize(8.5); doc.setTextColor(130);
+  doc.text(new Date().toLocaleDateString('it-IT',{day:'2-digit',month:'long',year:'numeric'}), ml, y);
+  doc.setTextColor(0); y+=9;
+
+  const compiled = STUDENTI.map((_,i)=>({i,d:loadData(i)})).filter(({i})=>isDone(i));
+  if (!compiled.length) { showToast('Nessuna scheda compilata ancora'); return; }
+
+  compiled.forEach(({i,d}) => {
+    checkPage(28);
+    doc.setDrawColor(200); doc.line(ml,y,210-mr,y); y+=5;
+    doc.setFont('helvetica','bold'); doc.setFontSize(11); doc.setTextColor(26);
+    doc.text(STUDENTI[i], ml, y); y+=6;
+    doc.setFont('helvetica','normal'); y+=1;
+
+    CRITERI.forEach(c => {
+      checkPage(12);
+      const v=d['r_'+c.k];
+      doc.setFont('helvetica','bold'); doc.setFontSize(8.5);
+      doc.text(c.nome+':', ml+3, y);
+      const nw=doc.getTextWidth(c.nome+': ');
+      doc.setFont('helvetica','normal');
+      doc.text(v!=null?SCALE[v]:'—', ml+3+nw, y); y+=4;
+      const nota=d['note_'+c.k];
+      if(nota){checkPage(6);doc.setFontSize(8);doc.setTextColor(80);const ls=doc.splitTextToSize('  '+nota,cw-6);doc.text(ls,ml+5,y);y+=ls.length*3.5;doc.setTextColor(0);doc.setFontSize(8.5);}
+    });
+    if(d.pf){checkPage(7);doc.setFont('helvetica','bold');doc.setFontSize(8);doc.setTextColor(15,110,86);doc.text('Punti di forza: ',ml+3,y);const w=doc.getTextWidth('Punti di forza: ');doc.setFont('helvetica','normal');doc.setTextColor(0);const ls=doc.splitTextToSize(d.pf,cw-6-w);doc.text(ls,ml+3+w,y);y+=ls.length*3.5+1;}
+    if(d.pd){checkPage(7);doc.setFont('helvetica','bold');doc.setFontSize(8);doc.setTextColor(153,60,29);doc.text('Punti di debolezza: ',ml+3,y);const w=doc.getTextWidth('Punti di debolezza: ');doc.setFont('helvetica','normal');doc.setTextColor(0);const ls=doc.splitTextToSize(d.pd,cw-6-w);doc.text(ls,ml+3+w,y);y+=ls.length*3.5+1;}
+    y+=2;
+    if(d.livello){
+      checkPage(7); doc.setFont('helvetica','bold'); doc.setFontSize(9);
+      doc.text('Livello: ',ml,y); const w=doc.getTextWidth('Livello: ');
+      doc.setFont('helvetica','normal'); doc.text(LIVELLI_LABEL[d.livello]||d.livello,ml+w,y); y+=5;
+    }
+    if(d.note_finale){
+      checkPage(12); doc.setFont('helvetica','bold'); doc.setFontSize(8.5);
+      doc.text('Note finali:',ml,y); y+=4;
+      doc.setFont('helvetica','normal'); doc.setTextColor(60);
+      const ls=doc.splitTextToSize(d.note_finale,cw);
+      doc.text(ls,ml,y); y+=ls.length*4; doc.setTextColor(0);
+    }
+    y+=6;
+  });
+  doc.save('domande_aristotele.pdf');
+  showToast('PDF generato');
+}
+
+buildDots();
+buildScheda();
+</script>
+</body>
+</html>
